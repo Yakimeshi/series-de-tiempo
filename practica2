@@ -1,0 +1,40 @@
+##AirPasseger##
+install.packages("forecast")
+require(forecast)
+View(AirPassengers)
+
+Air
+help(AirPassengers)
+class(AirPassengers)# conocer que tipo de datos es Airpassengers
+start(AirPassengers)#saber cuando inicia
+print(AirPassengers)#imprimir todos los datos de airpassenger
+length(AirPassengers)#conocer cuantos datos tiene AirPassenger
+head(AirPassengers, n=8)#muestra los primeros 8 datos de la serie de tiempo
+tail(AirPassengers, n=8)#muestra los ultimos 8 datos de ñla serie de tiempo
+plot(AirPassengers)
+plot(AirPassengers, xlab="Años", ylab="Numero de Pasajeros", type="b")
+
+
+### ejrcicio en clase####
+### de la pagina del inegi bajar bajar la tasa de informalidad laboral
+##en valores relativos a nivel nacional, todos los trimestres
+#desde el 2005 al 2017
+##esta base la importan a r y la declaran serie de tiempo con 
+##el inicio, fin, frecuencia de la st
+## una vez que hayan declarado la serie usar la funcion print, length,head,tail (con diez datos)
+##y explicarlas graficar la series de tiempo com 3 tipos de graficas diferentes y tres colores
+#ademas investigar y usar funciones time,deltat,cycle y frequency y explicar para que sirven
+
+laboral<-read.csv("C://Users//USUARIO//Documents//informa.csv")
+serie<-ts(laboral,frequency = 4, start=2005, end=2017)
+print(serie)#imprimir todos los datos de airpassenger
+length(serie)#conocer cuantos datos tiene AirPassenger
+head(serie, n=10)#muestra los primeros 8 datos de la serie de tiempo
+tail(serie, n=10)#muestra los ultimos 8 datos de ñla serie de tiempo
+plot(serie, xlab="Años", ylab="Tasa de informalidad laboral ", type="b", col="green")
+plot(serie, xlab="Años", ylab="Tasa de informalidad laboral ", type="l", col="brown")
+plot(serie, xlab="Años", ylab="Tasa de informalidad laboral ", type="h", col="orange")
+time(serie)## crea el vector de tiempos en el que se toman muestras de una serie de tiempo
+deltat(serie)##Estas funciones nos muestran el tiempo entre observaciones (deltat()) y número de observaciones por unidad de tiempo (frequency()) de una serie temporal.
+cycle(serie)## da las posiciones en el ciclo de cada observacion
+frequency(serie)##Estas funciones nos muestran el tiempo entre observaciones (deltat()) y número de observaciones por unidad de tiempo (frequency()) de una serie temporal.
