@@ -1,0 +1,13 @@
+install.packages("forecast")
+require(forecast)
+crimenes<-c(12362,13607,12160,13335,14553,14654,12791,11923,10225,9847)
+tscriminal<-ts(crimenes,start = 1980)
+ma (tscriminal,order=5)
+ma5crim<-c(NA,NA,13257.4,13661.8,13498.6,13451.2,12829.2,11888.0,NA,NA)
+macrim<- data.frame(crimenes,ma5crim)
+plot(tscriminal,main="Crimen orden Mexico 5", ylab="millones de personas", xlab="años")
+lines(ma(tscriminal,5),col="red")
+## como se puede observar las graficas la tendencia se observa de color rojo y esta mas suavizada que la
+# la series, el principal movimiento se detecta sin todos los pequeños cambios el promedio movil no estima
+# la tendencia al inicio y al final de la serie despues hay metodos que si permiten estimar
+# el inicio y el final de la tendencia , en general un orden grande significa una curva mas suavizada
