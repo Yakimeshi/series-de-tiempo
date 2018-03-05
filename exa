@@ -1,0 +1,36 @@
+install.packages("fpp")
+install.packages("forecast")
+require(fpp)
+require(forecast)
+
+multiple1 <- sample(15:25 , 250, replace = T)
+multiple2 <- sample(100:200 , 250, replace = T)
+multiple3 <- sample(29:49 , 250, replace = T)
+multiple4 <- sample(42:162 , 250, replace = T)
+
+base <- data.frame(multiple1,multiple2, multiple3, multiple4)
+View(base)
+
+
+multts <- ts(multiple1, frequency = 12, start = c(1990,3))
+mult2ts <- ts(multiple2, frequency = 12, start = c(1990,3))
+mult3ts <- ts(multiple3, frequency = 12, start = c(1990,3))
+mult4ts <- ts(multiple4, frequency = 12, start = c(1990,3))
+multdesc <- decompose(multts)
+multdesc
+
+#1
+descom <- window(multts , start = (1990) , end = (2003))
+plot(descom, col=2, main= "Descomposición ", sub="")
+descom2 <- window(multts , start = (1998) , end = (2006))
+plot(descom2, col=3, main= "Descomposición 2", sub="")
+#2:
+mult3ts
+descom3 <- ts(mult3ts[150:250], frequency= 12, start= 1990)
+descom4 <- ts(mult4ts[150:250], frequency= 12, start= 1990)
+#3:
+names(multiple1)
+descom5 <-stl(multts, s.window = 12)
+descom6 <- stl(mult2ts, s.window = 12)
+base1 <- data.frame(descom5$time.series[,2], descom5$time.series[,3])
+base2 <- data.frame(descom6$time.series[,2], descom5$time.series[,3])
