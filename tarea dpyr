@@ -1,0 +1,202 @@
+## TAREA PAQUETE DPLYR
+
+# El paquete dplyr fue desarrollado por Hadley Wickham (RStudio) como una optimización 
+# del paquete plyr. Este paquete no provee ninguna funcionalidad que no pueda 
+# ser realizada con las funciones del paquete base, sino que su valor agregado está en la 
+# simplicidad que provee para realizar tales operaciones. A su vez, dado que el paquete 
+# está escrito en C++, las funciones que provee permiten hacer operaciones más rápido que
+# su equivalente del paquete base.
+
+# Las funciones principales que provee el paquete dplyr son:
+  
+# select: devuelve solo las columnas indicadas de un dataframe.
+# filter: permite filtrar filas de una data frame según una expresión lógica.
+# arrange: ordena las filas de un data frame en función de los valores de una o más columnas.
+# rename: permite cambiar el nombre de una columna.
+# mutate: permite agregar una nueva columna o transformar una existente.
+# summarise: permite realizar resúmenes estadísticos de variables en un data frame.
+
+# Todas estas funciones tiene la particularidad de que su primer argumento
+# es el data frame al que le realizará la operación, mientras que los subsiguiente 
+# argumentos describen como realizar tal operación.
+# Finalmente el resultado de todas estas funciones es un nuevo data frame.
+
+# Luego, otra función/operador que nos provee este paquete es el pipe (%>%).
+# Este operador es usado para conectar la salida de una función con la entrada de la
+# siguiente. Esto es muy útil dado que, como mencionamos, todas estas funciones tienen 
+# como entrada un data frame, y como salida otro data frame por lo que el pipe nos 
+# permite encadenarlas, y así mejorar la legibilidad del código. 
+
+#Antes de comenzar a ver las funciones debemos instalar el paquete y cargarlo:
+
+install.packages("dplyr")
+
+require(dplyr)
+
+#Para este ejemplo vamos a utilizar datos que ya estan precargados:
+head(mtcars)
+head(iris)
+
+
+#SELECT
+# La función select es usada para seleccionar columnas de un data frame que queremos 
+# extraer. Por ejemplo, en el caso del dataset mtcars tenemos 11 columnas, pero solo 
+# vamos a trabajar con algunas de ellas. Entonces mediante select podemos indicar 
+# cuales columnas seleccionar, teniendo la posibilidad de hacerlo tanto mediante sus 
+# indices como mediante su nombres.
+
+head( select(mtcars, 1, 3) )
+head( select(mtcars, mpg, disp) )
+
+
+# En este ejemplo, hemos extraído las columnas mpg (1) y disp (3). 
+# Ambas expresiones son equivalentes. La función head simplemente la utilizamos 
+# para imprimir en pantalla solo 6 filas del dataset resultante.
+
+# Por otra parte, la función select permite utilizar diferentes funciones 
+# de ayuda (?select_helpers) para indicar las columnas a extraer:
+  
+ #  "-": selecciona todas las columnas menos las indicadas.
+
+head( select(mtcars, -c(mpg, disp)) )
+
+# ":": selecciona un rango de columnas.
+head( select(mtcars, 1:3) )
+
+# starts_with: selecciona todas las columnas que comiencen con el patrón indicado.
+head( select(iris, starts_with("Petal")))
+
+# ends_with: selecciona todas las columnas que terminen con el patrón indicado.
+head( select(iris, ends_with("Width")))
+# contains: selecciona las columnas que posean el patrón indicado.
+head( select(iris, contains("etal")))
+
+# matches: similar a contains, pero permite poner una expresión regular.
+head( select(iris, matches(".t.")))
+
+# everything: completa con las columnas del data frame no pasadas como argumento. 
+# De esta forma se nos simplifican tareas de reordenar las columnas, poniendo primeras 
+# las que nos interesen destacar.
+
+head( select(iris, Species, everything()))
+
+# one_of: selecciona las variables pasadas en un vector.
+vars <- c("Petal.Length", "Petal.Width")
+
+head( select(iris, one_of(vars)))
+
+
+
+
+###FILTER
+# Así como la función select es utilizada para seleccionar columnas, la función filter
+# hace lo propio con las filas del data frame. Supongamos que queremos extraer los 
+# automóviles del dataset mtcars que poseen 4 cilindros y más de 100 hp de potencia. 
+# Entonces haríamos:
+filter(mtcars, cyl == 4 & hp > 100)
+
+# La expresión lógica de la función filter podemos hacer que sea tan compleja como 
+# necesitemos. Hay que recordar que las para indicar múltiples condiciones utilizamos &
+# (and), mientras que para indicar que conserve las filas que cumplen al menos un criterio
+# usamos | (or).
+
+
+
+# ARRANGE
+# La función arrange es usada para reordenar las filas de una data frame según una o más 
+# columnas. Por ejemplo, si queremos reordenar mtcars de acorde a la variable mpg haríamos
+# los siguiente:
+
+arrange(mtcars, mpg)
+
+# Vemos que se ha ordenado de menor a mayor. Si queremos ordenar al revés (primero los valores 
+# más grandes) tenemos que poner desc(mpg) como argumento. Por otro lado, si queremos emplear 
+# múltiples condiciones de ordenamiento debemos poner tales condiciones en orden dentro de los 
+# argumentos de filter. Por ejemplo, con arrange(mtcars, hp, desc(mpg)) haríamos que se ordene 
+# primero por la columna hp en orden ascendente, y luego por mpg en forma descendente.
+
+
+
+
+# RENAME
+# La función rename permite modificar el nombre de una columna, conservando el resto de columnas.
+head( rename(iris, petal_length = Petal.Length) ) 
+
+# La función select permite realizar también una modificación en los nombre de las columnas,
+# pero en ese caso solo se conservan las columnas seleccionadas.
+head( select(iris, petal_length = Petal.Length) )
+
+
+
+# MUTATE
+# La función mutate tiene la finalidad de realizar transformaciones sobre variables (columnas) 
+# en un data frame. Supongamos que en mtcars queremos convertir la variable hp (Horse Power) a cv 
+# (caballos de vapor). Hasta el momento lo que hubiésemos hecho es:
+
+mtcars$cv <- mtcars$hp * 0.9863
+# Esta forma es perfectamente valida, pero si estamos usando las funciones del paquete dplyr,
+# lo que aporta más legibilidad al código es seguir usando la misma familia de funciones. 
+head( mutate(mtcars, cv = hp * 0.9863) )
+
+# Otros ejemplo podría ser estandarizar una variable. Para esto tomemos la variable mpg, 
+# le restamos su media y la dividimos por su desvío estándar.
+head( mutate(mtcars, mpg_est = (mpg - mean(mpg)) / sd(mpg) ))
+
+
+
+
+#group_by y summarize
+# La función group_by es usada para agrupar datos según una variable. Una vez con los datos 
+# agrupados podemos summarize para resumir estos utilizando una función de agregación.
+# Para los que tengan conocimiento de SQL, estos conceptos son idénticos a los empleado en 
+# ese lenguaje.
+
+
+# Por ejemplo, en el dataset mtcars podríamos querer saber cual es el valor medio de mpg y hp
+# para los vehículos acorde a su cantidad de cilindros. Entonces agrupamos los vehículos por 
+# la variable cyl y tomamos la media de mpg y hp.
+
+by_cyl <- group_by(mtcars, cyl)
+summarise(by_cyl, mean(mpg), mean(hp))
+
+# Lo que hemos hecho es tomar todos los vehículos con 4 cilindros y calcular la media de mpg y hp
+# para estos. Luego hemos hecho lo propio con los vehículos de 6 y 8 cilindros.
+# Finalmente se plasma en la tabla resultante estos valores.
+
+# Algunas de las funciones de agregación que se pueden emplear son:
+  
+# n():cantidad de elementos
+# sum():suma
+# mean():promedio
+# sd():desvío estándar.
+
+# En general se puede utilizar cualquier función que cumpla con que lo datos de entrada sean numericos 
+# y como salida se entregue una constante (vector de longitud 1).
+
+
+
+#PIPE
+# El pipe (%>%) es un operador que permite encadenas funciones. Lo que hace es tomar la salida de una 
+# función y pasarla como entrada de la siguiente función. Esto ayuda enormemente a mejorar la legibilidad
+# del código.
+
+# Por ejemplo, si queremos tomar el promedio de mpg y hp para vehículos de 6 y 8 cilindros y peso (wt) superior 
+# a 3K lbs, con lo que vimos hasta acá deberíamos hacer algo así:
+
+mtcars_aux <- select(mtcars, mpg, hp, cyl, wt)
+mtcars_aux <- filter(mtcars_aux, cyl != 4 & wt > 3.000)
+mtcars_aux <- group_by(mtcars_aux, cyl)
+mtcars_aux <- summarize(mtcars_aux, mean(hp), mean(mpg))
+mtcars_aux
+
+
+#En cambio, utilizando el pipe podemos encadenar las operaciones:
+mtcars %>% 
+  select(mpg, hp, cyl, wt) %>% 
+  filter(cyl != 4 & wt > 3.000) %>% 
+  group_by(cyl) %>% 
+  summarize(mean(hp), mean(mpg))
+
+# En este caso estamos tomando el dataset y lo pasamos a la función select. 
+# Luego de elegir las columnas con que trabajaremos enviamos el dataset resultante a la función
+# filter, y así sucesivamente hasta obtener el resultado final.
