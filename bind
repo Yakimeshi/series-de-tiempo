@@ -1,0 +1,6 @@
+autos<- read.csv("C://Users//USUARIO//Downloads//autos.csv")
+autos<- data.frame(autos)
+autos1<-rbind(autos)[6:17,]
+
+# otro modo
+acci<- autos[-1,-1]
