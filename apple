@@ -1,0 +1,6 @@
+apple <- read.csv ("C://Users//USUARIO//Documents//AAPL.csv", header = F)
+applet <- ts (apple, start =2017, frequency = 252)
+require (fpp)
+mod1 <- auto.arima (applet, seasonal = F)
+mod1
+# yt= .2708y^(t-1)+.6248y^(t-2)+.1593
