@@ -1,0 +1,70 @@
+bimbo <- read.csv("C://Users//USUARIO//Documents//bimbo.csv")[,5]
+bimbot<-ts(bimbo,frequency=252,start=2017)
+
+require(fpp)
+
+##  Vamos a revisar si la serie es estacionaria
+# eso lo hacemos en el adf.ytest
+
+adf.test(bimbot)
+## en esta prueba esperamos un p-value menor a 0.05
+## sin embargo en la serie bimbot obtenemos un p-value de .08 
+## por lo que hay que aplicar una diferenciacion
+## para convertir la serie en estacionaria
+
+dbimbot <-diff(bimbot)# DIFERENCIACION A LA ST
+##Para convertirla en estacionaria
+adf.test(dbimbot)
+##  como nuestro p-value ya es de 0.01 ya podemos plaicar ARIMA
+
+##Ahora que tenemos la st estacionaria ya podemos
+## aplicar un modelo arima, por lo que hay que elegir
+## los valores de p,d y q para elegir los valores  de p y q
+## se utiliza la funcion de autocorrelacion (acf) y la funcion
+## de autocorrelacion parcial (pacf)
+##primero aplicamos la funcion de autocorrelacion para elegir el valor de q
+
+x11()
+acf(dbimbot)
+
+## Una vez que apliquemos el acf vamos a observar la grafica y 
+## ver cuantas lineas sobrepasan el margen
+## y el numero de lineas son el valor de q
+x11()
+pacf(dbimbot)
+
+
+mod1bim<-Arima(bimbot,order = c(0,1,0))
+mod1bim
+
+
+mod2bim<-Arima(bimbot,order = c(1,1,2))
+mod2bim
+
+
+
+mod3bim<-Arima(bimbot,order = c(3,1,2))
+mod3bim
+
+mod4bim<-Arima(bimbot,order = c(2,1,2))
+mod4bim ## elegimos el mod4bim
+
+mod4<-forecast(mod4bim, h=12)
+x11()
+plot(forecast(mod4bim,h=12),include = 45)
+
+mod5bim <-auto.arima(bimbot)
+mod5bim
+
+x11()
+plot(forecast(mod5bim,h=12),include = 45)
+
+
+
+
+
+
+
+### ELEGIR DOS SERIES DE TIEMPO DIFERENTES A LAS QUE HAYAMOS VISTO EN CLASE Y REPETIR EL PROCEDIMIENTO
+## PARA ELEGIR UN MODEO ARIMA "MEJOR" SEGUN LOCS CRITERIOS AICC 
+## Y COMPARARLOS CON EL MODELO AUTO.ARIMA
