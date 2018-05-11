@@ -1,0 +1,12 @@
+require (fpp)
+x11()
+plot(AirPassengers)
+adf.test(AirPassengers)
+aa<- auto.arima(AirPassengers)
+aa
+"Lyung"
+bb<- hw(AirPassengers, h=12)
+x11()
+plot(forecast(aa, h=12))
+x11()
+plot(forecast(bb))
