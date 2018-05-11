@@ -1,0 +1,50 @@
+carro <- read.csv ("C://Users//USUARIO//Desktop//CARRITOS.csv")
+carrot <- ts(carro, frequency =99 , start = 2010)
+##### revisar si la serie es estacionaria #####
+#### eso lo hacemos con el adf.test ######
+adf.test (carrot)
+#### en esta prueba esperamos un p-value menor a .05 ####
+#### sin embargo en la serie bimbot obtenemos un p-value de .08 
+#### por lo que hay que aplicar una diferenciacion para convertir
+#### la serie de tiempo en estacionaria...
+dcarrot <- diff(carrot) ### diferenciacion a la st
+#### para convertirla en estacionaria
+adf.test(dcarrot)
+### ahora que tenemos la st estacionaria ya podemos
+### aplicar un modelo arima, por lo que hay que elegir
+### los valores de p, d y q, para elegir los valores de p y q
+### se utiliza la funcion de autocorrelacion (acf) y la funcion 
+### de autocorrelacion parcial para elegir el valor de q
+x11()
+acf (dcarrot)
+#### una vez que apliquemos el acf vamos a observar la grafica y 
+### ver cuantas lineas sobrepasan el margen y el número de 
+### lineas con el valor de q
+x11()
+pacf (dcarrot)
+
+mod1car <- Arima (carrot, order = c(0,1,0))
+mod1car
+mod2car <- Arima (carrot, order= c(1,1,2))
+mod2car
+mod3car <- Arima (carrot, order= c(3,1,2))
+mod3car
+mod4car <- Arima (carrot, order= c(2,1,2))
+mod4car ### elegimos el mod4bim
+mod4 <- forecast (mod4bim, h = 12)
+x11()
+plot (forecast (mod4bin, h = 12), include = 45)
+mod5bim <- auto.arima(bimbot)
+mod5bim 
+x11()
+plot (forecast (mod5bim, h = 12), include = 45)
+
+#### ELEGIR DOS SERIES DE TIEMPO DIF
+### 
+
+
+
+require (fpp)
+mod1 <- auto.arima(desot, seasonal = F)
+mod1
+11x()
